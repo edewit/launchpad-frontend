@@ -6,18 +6,14 @@ import {CiDirective} from "./ci.directive";
 @Directive({
   selector: "[authentication]"
 })
-export class AuthenticationDirective extends CiDirective {
+export class AuthenticationDirective {
   @Input("authentication") invert: boolean;
 
-  constructor(private el: ElementRef, private _history: History, private keycloak: KeycloakService) {
-    super(el, _history);
-  }
-
-  ngOnInit() {
+  constructor(private el: ElementRef, private history: History, private keycloak: KeycloakService) {
   }
 
   ngDoCheck() {
-    let authentication = this.isCiChosen();
+    let authentication = CiDirective.isCiChosen(this.history);
     let authenticated = this.keycloak.isAuthenticated();
     let render = authentication && !authenticated;
     if (this.invert) render = !render;

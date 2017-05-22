@@ -11,13 +11,13 @@ export class CiDirective implements OnInit {
   }
 
   ngOnInit() {
-    let isCi = this.isCiChosen();
+    let isCi = CiDirective.isCiChosen(this.history);
     if (this.invert) isCi = !isCi;
     if (isCi) this.elementRef.nativeElement.remove();
   }
 
-  isCiChosen(): boolean {
-    let input = this.history.convert().inputs.find(input => input.name === "deploymentType");
+  static isCiChosen(history: History): boolean {
+    let input = history.convert().inputs.find(input => input.name === "deploymentType");
     return input != null ? input.value !== "ZIP File" : false;
   }
 
