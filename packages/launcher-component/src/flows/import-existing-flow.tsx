@@ -15,7 +15,7 @@ const defaultImportApp = {
 function getFlowStatus(app: ImportApp) {
   if (!SrcRepositoryHub.checkCompletion(app.srcRepository)) {
     return {
-      hint: 'You should configure the source repository.',
+      hint: 'You should select a repository to import from.',
       isReadyForDownload: false,
       isReadyForLaunch: false,
     };
