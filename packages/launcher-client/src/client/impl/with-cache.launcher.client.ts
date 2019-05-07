@@ -49,7 +49,11 @@ export default class WithCacheLauncherClient implements LauncherClient {
     return enums[id] || [];
   }
 
-  public async enums(): Promise<Enums> {
+  public async enums(runtimeFilter?: string, versionFilter?: string): Promise<Enums> {
+    if (runtimeFilter || versionFilter) {
+      return this.client.enums(runtimeFilter, versionFilter);
+    }
+
     let enums = lscache.get('launcher-client.enums');
     if (!enums) {
       enums = await this.client.enums();

@@ -60,8 +60,9 @@ export default class DefaultLauncherClient implements LauncherClient {
     return enums[id] || [];
   }
 
-  public async enums(): Promise<Enums> {
-    return await this.httpService.get<Enums>(this.config.creatorUrl, '/enums');
+  public async enums(runtimeFilter?: string, versionFilter?: string): Promise<Enums> {
+    const endpoint = `/enums?runtimeFilter=${runtimeFilter || ''}&versionFilter=${versionFilter || ''}`;
+    return await this.httpService.get<Enums>(this.config.creatorUrl, endpoint);
   }
 
   public async importAnalyze(gitImportUrl: string): Promise<AnalyzeResult> {

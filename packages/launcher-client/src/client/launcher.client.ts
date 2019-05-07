@@ -29,7 +29,7 @@ export interface LauncherClient {
 
   enum(id: string): Promise<PropertyValue[]>;
 
-  enums(): Promise<Enums>;
+  enums(runtimeFilter?: string, versionFilter?: string): Promise<Enums>;
 
   capabilities(): Promise<Capability[]>;
 
