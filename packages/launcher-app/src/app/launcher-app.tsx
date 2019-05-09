@@ -12,7 +12,7 @@ import {
 } from 'launcher-component';
 import { Layout } from './layout';
 import { authMode, creatorApiUrl, authConfig, launcherApiUrl, publicUrl } from './config';
-import { Redirect, Route, Switch } from 'react-router';
+import { Redirect, Route, Switch, match } from 'react-router';
 import { BrowserRouter } from 'react-router-dom';
 import { useRouter, createRouterLink, getRequestedRoute, goToWithRouter } from '../router/use-router';
 import { useAuthenticationApiStateProxy, AuthenticationApiContext } from '../auth/auth-context';
@@ -21,7 +21,7 @@ import { newAuthApi, AuthRouter } from '../auth/authentication-api-factory';
 function Routes(props: {}) {
   const router = useRouter();
   const requestedRoute = getRequestedRoute(router);
-  if(requestedRoute) {
+  if (requestedRoute) {
     useEffect(() => {
       goToWithRouter(router, requestedRoute);
     }, []);
@@ -39,13 +39,17 @@ function Routes(props: {}) {
     const rootLink = createRouterLink(router, '/');
     return cancelProps.children(rootLink.onClick);
   };
-  const CreateNewAppFlowRoute = () => (<WithCancel>{onCancel => <CreateNewAppFlow onCancel={onCancel} />}</WithCancel>);
+  const CreateNewAppFlowRoute = (route: { match: match }) => {
+    const params: any = route.match.params;
+    const filter = {runtimeFilter: params.runtimeFilter, versionFilter: params.versionFilter};
+    return (<WithCancel>{onCancel => <CreateNewAppFlow onCancel={onCancel} filter={filter} />}</WithCancel>)
+  };
   const ImportExistingFlowRoute = () => (<WithCancel>{onCancel => <ImportExistingFlow onCancel={onCancel} />}</WithCancel>);
   const DeployExampleAppFlowRoute = () => (<WithCancel>{onCancel => <DeployExampleAppFlow onCancel={onCancel} />}</WithCancel>);
   return (
     <Switch>
       <Route path="/home" exact component={Menu} />
-      <Route path="/flow/new-app" exact component={CreateNewAppFlowRoute} />
+      <Route path="/flow/new-app/:runtimeFilter?/:versionFilter?" exact component={CreateNewAppFlowRoute} />
       <Route path="/flow/import-existing-app" exact component={ImportExistingFlowRoute} />
       <Route path="/flow/deploy-example-app" exact component={DeployExampleAppFlowRoute} />
       <Redirect to="/home" />
@@ -75,15 +79,15 @@ export function LauncherApp() {
   return (
     <DataLoader loader={authLoader}>
       <AuthenticationApiContext.Provider value={proxyAuthApi}>
-          <LauncherDepsProvider
-            authorizationsManager={proxyAuthApi}
-            creatorUrl={creatorApiUrl}
-            launcherUrl={launcherApiUrl}
-          >
-            <AuthRouter loginPage={LoginPage} basename={publicUrl}>
-              <HomePage />
-            </AuthRouter>
-          </LauncherDepsProvider>
+        <LauncherDepsProvider
+          authorizationsManager={proxyAuthApi}
+          creatorUrl={creatorApiUrl}
+          launcherUrl={launcherApiUrl}
+        >
+          <AuthRouter loginPage={LoginPage} basename={publicUrl}>
+            <HomePage />
+          </AuthRouter>
+        </LauncherDepsProvider>
       </AuthenticationApiContext.Provider>
     </DataLoader >
   );

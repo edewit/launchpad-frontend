@@ -16,8 +16,8 @@ export interface Runtime {
   versions: Array<{ id: string; name: string; }>
 }
 
-async function loadRuntimes(client: LauncherClient): Promise<Runtime[]> {
-  const enums = await client.enums();
+async function loadRuntimes(client: LauncherClient, runtimeFilter?: string, versionFilter?: string): Promise<Runtime[]> {
+  const enums = await client.enums(runtimeFilter, versionFilter);
   const runtimes = checkNotNull(enums['runtime.name'], `enums['runtime.name']`);
   return runtimes.map(r => {
     const versions = checkNotNull(enums[`runtime.version.${r.id}`], `enums['runtime.version.${r.id}']`);
@@ -41,7 +41,14 @@ export function NewAppRuntimeLoader(props: { id: string, children: (runtime?: Ru
   );
 }
 
-export function NewAppRuntimesLoader(props: { category: string, children: (items: Runtime[]) => any }) {
+interface NewAppRuntimesLoaderProps {
+  category: string;
+  runtimeFilter?: string;
+  versionFilter?: string;
+  children: (items: Runtime[]) => any;
+}
+
+export function NewAppRuntimesLoader(props: NewAppRuntimesLoaderProps) {
   const client = useLauncherClient();
   const loader = async () => {
     const runtimes = await loadRuntimes(client);

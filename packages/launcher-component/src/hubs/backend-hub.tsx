@@ -91,7 +91,11 @@ export const BackendHub: FormHub<BackendFormValue> = {
                        If you're looking to expose an HTTP API or interact with services like a database,
                        choosing one here will hook that together for you."
               />
-              <NewAppRuntimesLoader category="backend">
+              <NewAppRuntimesLoader
+                category="backend"
+                runtimeFilter={props.initialValue.filter ? props.initialValue.filter.runtimeFilter : undefined}
+                versionFilter={props.initialValue.filter ? props.initialValue.filter.versionFilter : undefined}
+              >
                 {(items) => (
                   <RuntimePicker.Element
                     items={items}
